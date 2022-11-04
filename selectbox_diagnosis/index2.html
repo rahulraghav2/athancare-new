@@ -1,0 +1,50 @@
+<html lang="en">
+
+<head>
+    <title>Jquery Chosen - Select Box with Search Option</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+    <script>
+        var app = angular.module('testApp', [])
+        app.controller('myCtrl', function ($scope, $http, $interval, $timeout) {
+            $scope.medicine_search_results = [];
+            $scope.getAllMedicines = function () {
+                console.log("Inside getAllMedicines");
+
+
+                $http.get('http://192.168.1.150:9090/getall_medicines')
+                    .then(function (response) {
+
+                        console.log("response", response.data)
+                        if (response.data.length > 0)
+                            $scope.medicine_search_results = response.data;
+                    });
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
+
+</head>
+
+<body ng-app="testApp" ng-controller="myCtrl" ng-init="getAllMedicines()">
+
+
+    <div style="width:520px;margin:0px auto;margin-top:30px;">
+        <h2>Select Box with Search Option Jquery</h2>
+        <select class="chosen" style="width:500px;">
+            <option ng-repeat="med in medicine_search_results">{{med}}</option>
+        </select>
+    </div>
+
+
+    <script type="text/javascript">
+        $(".chosen").chosen();
+    </script>
+
+
+</body>
+
+</html>

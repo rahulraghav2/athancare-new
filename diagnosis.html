@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Diagnosis</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="./work.js"></script>
+    <script src="script1.js"></script>
+    <script src="script2.js"></script>
+    <link href="ng-responsive-carousel.css" rel="stylesheet" type="text/css">
+</head>
+
+<body ng-app="testApp" ng-controller="myCtrl" ng-init="check_user()">
+
+    <div id="header_nav">
+        <img src="./athan_logo_gradiant.png">
+        <p style="position: fixed;top:40px;color:#2886af;font-size: 12px;width: 100%;text-align: center;left:0px;">Speciality - {{prescription_arr.speciality}}</p>
+        <p id="txt" style="position: fixed;top:10px;color:#2886af;width: 100%;text-align: center;left:0px;"></p>
+        <!-- <a href="http://192.168.1.150:40">
+            <p style="position: fixed;right:230px;cursor: pointer;">Medicines</p>
+        </a> -->
+        <p onclick="logout_card()" class="userName">
+            {{user}}
+            <img id="logout_arrow" style="width: 15px;height: 20px;" src="./arrow-down-sign-to-navigate.svg">
+        </p>
+        <div id="logout">
+            <ul>
+                <li onclick="window.localStorage.clear();window.location.href='http://192.168.1.150:60'">Logout</li>
+                <!-- <li onclick="window.location='http://192.168.1.150:50'">Converted Prescriptions</li> -->
+            </ul>
+        </div>
+    </div>
+    <!-- {{prescription_arr}} -->
+    <div class="diagnosisContainer">
+        <div id="prescriptions_wrapper" class="prescriptionsWrapper">
+
+            <div class="prescCarousel">
+                <p style="top:5px;left:10px;position:relative;">{{prescription_arr.img_appt_id}}</p>
+                <!-- <div ng-click="prevPrescPage()">Back</div> -->
+                <div ng-if="isPrev" class="prevPage" ng-click="prevPrescPage()"><i class="fa fa-chevron-left fa-2x"></i>
+                </div>
+                <div id="lightgallery"></div>
+                <!-- <div ng-click="nextPrescPage()">Next</div> -->
+                <div ng-if="isNext" class="nextPage" ng-click="nextPrescPage()"><i
+                        class="fa fa-chevron-right fa-2x"></i></div>
+            </div>
+            <div id="zoom_buttons" class="zoomButtons">
+                <!-- <div id="zooms" class="zoomIcons">
+                    <img src="./zoom_in.png" onclick="zoom_image('in')">
+                    <img src="./zoom_out.png" onclick="zoom_image('out')">
+                </div> -->
+                <div id="next_icons" class="nextIcons">
+                    <!-- <i class="fa fa-fast-backward" aria-hidden="true" ng-click="next_appt_pres('back')"></i> -->
+                    <i class="fa fa-fast-forward" aria-hidden="true" ng-click="skip_prescription()"></i>
+                </div>
+            </div>
+        </div>
+
+        <div id="prescription_convert_wrapper" class="prescriptionConvertWrapper">
+            <!-- <div id="digitalize_by">
+                <p>Digitize By {{user}}</p>
+            </div> -->
+            <div id="flag_this">
+                <p>Flag : <input style="padding:10px;" type="checkbox"> Flag This</p>
+            </div>
+            <div class="tests_form">
+                <div class="head">
+                    <h4>Tests</h4>
+                </div>
+                <div class="content">
+                    <div class="tests_inputs">
+                        <div class="prescriptionInputs">
+                            <!-- <input list="testInput1" type="text" placeholder="Ex: Complete Blood Count" class="enter_test_name"
+                            ng-model="test_search" ng-change="search_diagnosis(test_search,0,0)" class="testInput" autocomplete="off">
+                            <datalist id="testInput1">
+                                <option class="diagnosisName" ng-if="isLoad && tests_search_results.length>0" value="{{tests.diagnosis_name}}" ng-repeat="tests in tests_search_results" 
+                                ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,0)"
+                                >
+                            </datalist> -->
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search,0,0)"
+                                    ng-focus="inputFocus(0,0)" ng-blur="inputBlur(0,0)"
+                                    ng-keydown="handleKeyNavigation($event,0,0)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible0">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,0)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad0" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        </div>
+                        <div ng-if="isRecordFound0" class='noRecords'>No Records Found</div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f1" ng-click="flag_test(0,0,f1)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(0)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion1"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search1"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search1,0,1)"
+                                    ng-focus="inputFocus(0,1)" ng-blur="inputBlur(0,1)"
+                                    ng-keydown="handleKeyNavigation($event,0,1)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible01">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,1)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad01" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(1);"
+                                ng-click="pop_out_test(1)">
+                        </div>
+                        <div ng-if="isRecordFound01" class='noRecords'>No Records Found</div>
+
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f2" ng-click="flag_test(0,1,f2)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(1)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search2"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search2,0,2)"
+                                    ng-focus="inputFocus(0,2)" ng-blur="inputBlur(0,2)"
+                                    ng-keydown="handleKeyNavigation($event,0,2)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible02">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,2)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad02" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(2);"
+                                ng-click="pop_out_test(2)">
+                        </div>
+                        <div ng-if="isRecordFound02" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,2)"
+                                    class="diagnosisName">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f3" ng-click="flag_test(0,2,f3)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(2)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search3"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search3,0,3)"
+                                    ng-focus="inputFocus(0,3)" ng-blur="inputBlur(0,3)"
+                                    ng-keydown="handleKeyNavigation($event,0,3)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible03">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,3)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad03" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(3);"
+                                ng-click="pop_out_test(3)">
+                        </div>
+                        <div ng-if="isRecordFound03" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,3)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f4" ng-click="flag_test(0,3,f4)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(3)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search4"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search4,0,4)"
+                                    ng-focus="inputFocus(0,4)" ng-blur="inputBlur(0,4)"
+                                    ng-keydown="handleKeyNavigation($event,0,4)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible04">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,4)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad04" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(4);"
+                                ng-click="pop_out_test(4)">
+                        </div>
+                        <div ng-if="isRecordFound04" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,4)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f5" ng-click="flag_test(0,4,f5)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(4)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion5"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search5"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search5,0,5)"
+                                    ng-focus="inputFocus(0,5)" ng-blur="inputBlur(0,5)"
+                                    ng-keydown="handleKeyNavigation($event,0, 5)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible05">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,5)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad05" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(5);"
+                                ng-click="pop_out_test(5)">
+                        </div>
+                        <div ng-if="isRecordFound05" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,5)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f6" ng-click="flag_test(0,5,f6)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(5)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion6"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search6"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search6,0,6)"
+                                    ng-focus="inputFocus(0,6)" ng-blur="inputBlur(0,6)"
+                                    ng-keydown="handleKeyNavigation($event,0, 6)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible06">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,6)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad06" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(6);"
+                                ng-click="pop_out_test(6)">
+                        </div>
+                        <div ng-if="isRecordFound06" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,6)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f7" ng-click="flag_test(0,6,f7)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(6)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion7"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search7"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search7,0,7)"
+                                    ng-focus="inputFocus(0,7)" ng-blur="inputBlur(0,7)"
+                                    ng-keydown="handleKeyNavigation($event,0,7)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible07">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,7)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad07" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(7);"
+                                ng-click="pop_out_test(7)">
+                        </div>
+                        <div ng-if="isRecordFound07" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,7)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f8" ng-click="flag_test(0,7,f8)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(7)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion8"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search8"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search8,0,8)"
+                                    ng-focus="inputFocus(0,8)" ng-blur="inputBlur(0,8)"
+                                    ng-keydown="handleKeyNavigation($event,0, 8)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible08">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,8)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad08" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(8);"
+                                ng-click="pop_out_test(8)">
+                        </div>
+                        <div ng-if="isRecordFound08" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,8)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f9" ng-click="flag_test(0,8,f9)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(8)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion9"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search9"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search9,0,9)"
+                                    ng-focus="inputFocus(0,9)" ng-blur="inputBlur(0,9)"
+                                    ng-keydown="handleKeyNavigation($event,0, 9)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible09">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,9)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad09" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(9);"
+                                ng-click="pop_out_test(9)">
+                        </div>
+                        <div ng-if="isRecordFound09" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,9)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f10" ng-click="flag_test(0,9,f10)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(9)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion10"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Added new Tests Div-->
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search10"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search10,0,10)"
+                                    ng-focus="inputFocus(0,10)" ng-blur="inputBlur(0,10)"
+                                    ng-keydown="handleKeyNavigation($event,0, 10)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible010">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,10)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad010" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(10);"
+                                ng-click="pop_out_test(10)">
+                        </div>
+                        <div ng-if="isRecordFound010" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,10)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f11" ng-click="flag_test(0,10,f11)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(10)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion11"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search11"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search11,0,11)"
+                                    ng-focus="inputFocus(0,11)" ng-blur="inputBlur(0,11)"
+                                    ng-keydown="handleKeyNavigation($event,0, 11)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible011">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,11)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad011" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(11);"
+                                ng-click="pop_out_test(11)">
+                        </div>
+                        <div ng-if="isRecordFound011" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,11)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f12" ng-click="flag_test(0,11,f12)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(11)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion12"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search12"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search12,0,12)"
+                                    ng-focus="inputFocus(0,12)" ng-blur="inputBlur(0,12)"
+                                    ng-keydown="handleKeyNavigation($event,0, 12)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible012">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,12)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad012" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(12);"
+                                ng-click="pop_out_test(12)">
+                        </div>
+                        <div ng-if="isRecordFound012" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,12)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f13" ng-click="flag_test(0,12,f13)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(12)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion13"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search13"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search13,0,13)"
+                                    ng-focus="inputFocus(0,13)" ng-blur="inputBlur(0,13)"
+                                    ng-keydown="handleKeyNavigation($event,0,13)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible013">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,13)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad013" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(13);"
+                                ng-click="pop_out_test(13)">
+                        </div>
+                        <div ng-if="isRecordFound013" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,13)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f14" ng-click="flag_test(0,13,f14)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(13)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion14"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tests_inputs not_visible">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_test_name" name="diagnosisName"
+                                    placeholder="Ex: Complete Blood Count" ng-model="test_search14"
+                                    ng-required="inputRequired" ng-change="search_diagnosis(test_search14,0,14)"
+                                    ng-focus="inputFocus(0,14)" ng-blur="inputBlur(0,14)"
+                                    ng-keydown="handleKeyNavigation($event,0,14)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible014">
+                                    <li ng-repeat="item in filteredArray"
+                                        ng-click="push_tests(item.diagnosis_name,item.id,0,14)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                        <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad014" class="loaderImage">
+                            </div>
+                            <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                            <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(14);"
+                                ng-click="pop_out_test(14)">
+                        </div>
+                        <div ng-if="isRecordFound014" class='noRecords'>No Records Found</div>
+                        <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                        <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,14)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="f15" ng-click="flag_test(0,14,f15)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                                ng-click="comment_test(14)">Comment</span>
+                            <div class="test_suggestion">
+                                <textarea ng-model="suggestion15"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="procedures_form">
+                <div class="head">
+                    <h4>Procedures</h4>
+                </div>
+                <div class="content">
+                    <div class="procedures_input">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search,1,0)" ng-focus="inputFocus(1,0)"
+                                    ng-blur="inputBlur(1,0)" ng-keydown="handleKeyNavigation($event,1,0)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible1">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.id,1,0)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad1" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+                        </div>
+                        <div ng-if="isRecordFound1" class='noRecords'>No Records Found</div>
+
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p1" ng-click="flag_procedures(1,0,p1)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="procedures_input not_visible_procedures">
+                        <div class="prescriptionInputs">
+
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search1" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search1,1,1)" ng-focus="inputFocus(1,1)"
+                                    ng-blur="inputBlur(1,1)" ng-keydown="handleKeyNavigation($event,1,1)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible11">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,1,1)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad11" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+                            <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(1);"
+                                ng-click="pop_out_procedures(1)">
+                        </div>
+                        <div ng-if="isRecordFound11" class='noRecords'>No Records Found</div>
+                        <div class="procedures_search_display">
+                            <ul>
+                                <li ng-repeat="procedures in procedure_search_results"
+                                    ng-click="push_procedures(procedures.diagnosis_name,procedures.id,1)">
+                                    {{procedures.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p2" ng-click="flag_procedures(1,1,p2)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="procedures_input not_visible_procedures">
+                        <div class="prescriptionInputs">
+
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search2" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search2,1,2)" ng-focus="inputFocus(1,2)"
+                                    ng-blur="inputBlur(1,2)" ng-keydown="handleKeyNavigation($event,1,2)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible12">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,1,2)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad12" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+                            <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(2);"
+                                ng-click="pop_out_procedures(2)">
+                        </div>
+                        <div ng-if="isRecordFound12" class='noRecords'>No Records Found</div>
+                        <div class="procedures_search_display">
+                            <ul>
+                                <li ng-repeat="procedures in procedure_search_results"
+                                    ng-click="push_procedures(procedures.diagnosis_name,procedures.id,2)">
+                                    {{procedures.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p3" ng-click="flag_procedures(1,2,p3)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="procedures_input not_visible_procedures">
+                        <div class="prescriptionInputs">
+
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search3" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search3,1,3)" ng-focus="inputFocus(1,3)"
+                                    ng-blur="inputBlur(1,3)" ng-keydown="handleKeyNavigation($event,1,3)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible13">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,1,3)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad13" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                            <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(3);"
+                                ng-click="pop_out_procedures(3)">
+                        </div>
+                        <div ng-if="isRecordFound13" class='noRecords'>No Records Found</div>
+                        <div class="procedures_search_display">
+                            <ul>
+                                <li ng-repeat="procedures in procedure_search_results"
+                                    ng-click="push_procedures(procedures.diagnosis_name,procedures.id,3)">
+                                    {{procedures.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p4" ng-click="flag_procedures(1,3,p4)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="procedures_input not_visible_procedures">
+                        <div class="prescriptionInputs">
+
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search4" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search4,1,4)" ng-focus="inputFocus(0)"
+                                    ng-blur="inputBlur(0)" ng-keydown="handleKeyNavigation($event,1,4)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible14">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,1,4)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad14" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                            <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(4);"
+                                ng-click="pop_out_procedures(4)">
+                        </div>
+                        <div ng-if="isRecordFound14" class='noRecords'>No Records Found</div>
+                        <div class="procedures_search_display">
+                            <ul>
+                                <li ng-repeat="procedures in procedure_search_results"
+                                    ng-click="push_procedures(procedures.diagnosis_name,procedures.id,4)">
+                                    {{procedures.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p5" ng-click="flag_procedures(1,4,p5)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="procedures_input not_visible_procedures">
+                        <div class="prescriptionInputs">
+
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search5" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search5,1,5)" ng-focus="inputFocus(0)"
+                                    ng-blur="inputBlur(0)" ng-keydown="handleKeyNavigation($event,1,5)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible15">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.id,1,5)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad15" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                            <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(5);"
+                                ng-click="pop_out_procedures(5)">
+                        </div>
+                        <div ng-if="isRecordFound15" class='noRecords'>No Records Found</div>
+                        <div class="procedures_search_display">
+                            <ul>
+                                <li ng-repeat="procedures in procedure_search_results"
+                                    ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,5)">
+                                    {{procedures.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p6" ng-click="flag_procedures(1,5,p6)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="procedures_input not_visible_procedures">
+                        <div class="prescriptionInputs">
+
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search6" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search6,1,6)" ng-focus="inputFocus(0)"
+                                    ng-blur="inputBlur(0)" ng-keydown="handleKeyNavigation($event,1,6)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible16">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.id,1,6)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad16" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                            <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(6);"
+                                ng-click="pop_out_procedures(6)">
+                        </div>
+                        <div class="procedures_search_display">
+                            <ul>
+                                <li ng-repeat="procedures in procedure_search_results"
+                                    ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,6)">
+                                    {{procedures.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div ng-if="isRecordFound16" class='noRecords'>No Records Found</div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p7" ng-click="flag_procedures(1,6,p7)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="procedures_input not_visible_procedures">
+                        <div class="prescriptionInputs">
+
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search7" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search7,1,7)" ng-focus="inputFocus(0)"
+                                    ng-blur="inputBlur(0)" ng-keydown="handleKeyNavigation($event,1,7)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible17">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.id,1,7)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad17" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                            <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(7);"
+                                ng-click="pop_out_procedures(7)">
+                        </div>
+                        <div ng-if="isRecordFound17" class='noRecords'>No Records Found</div>
+                        <div class="procedures_search_display">
+                            <ul>
+                                <li ng-repeat="procedures in procedure_search_results"
+                                    ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,7)">
+                                    {{procedures.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p8" ng-click="flag_procedures(1,7,p8)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="procedures_input not_visible_procedures">
+                        <div class="prescriptionInputs">
+
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search8" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search8,1,8)" ng-focus="inputFocus(0)"
+                                    ng-blur="inputBlur(0)" ng-keydown="handleKeyNavigation($event,1,8)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible18">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.id,1,8)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad18" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                            <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(8);"
+                                ng-click="pop_out_procedures(8)">
+                        </div>
+                        <div ng-if="isRecordFound18" class='noRecords'>No Records Found</div>
+                        <div class="procedures_search_display">
+                            <ul>
+                                <li ng-repeat="procedures in procedure_search_results"
+                                    ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,8)">
+                                    {{procedures.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p9" ng-click="flag_procedures(1,8,p9)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="procedures_input not_visible_procedures">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_procedure_name" placeholder="Enter Procedure"
+                                    ng-model="procedure_search9" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(procedure_search9,1,9)" ng-focus="inputFocus(0)"
+                                    ng-blur="inputBlur(0)" ng-keydown="handleKeyNavigation($event,1,9)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible19">
+                                    <li ng-repeat="procedures in filteredArray"
+                                        ng-click="push_procedures(procedures.diagnosis_name,procedures.id,1,9)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                        <span ng-if="!procedures.diagnosis_name">{{procedures.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad19" class="loaderImage">
+                            </div>
+                            <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+                            <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(9);"
+                                ng-click="pop_out_procedures(9)">
+                        </div>
+                        <div ng-if="isRecordFound19" class='noRecords'>No Records Found</div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="p10" ng-click="flag_procedures(1,9,p10)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="consumables_form">
+                <div class="head">
+                    <h4>Consumable</h4>
+                </div>
+                <div class="content">
+                    <div class="consumables_input" id="consumable_input">
+                        <div class="prescriptionInputs">
+                            <!-- <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                            ng-model="consumable_search" ng-change="search_diagnosis(consumable_search,2,0)"> -->
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search,2,0)" ng-focus="inputFocus(2,0)"
+                                    ng-blur="inputBlur(2,0)" ng-keydown="handleKeyNavigation($event,2,0)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible2">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,0)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad2" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+                        </div>
+                        <div ng-if="isRecordFound2" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.id,0)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c1" ng-click="flag_consumables(2,0,c1)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="consumables_input not_visible_consumables" id="consumable_input">
+                        <div class="prescriptionInputs">
+                            <!-- <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                            ng-model="consumable_search1" ng-change="search_diagnosis(consumable_search1,2,1)"> -->
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search1" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search1,2,1)" ng-focus="inputFocus(2,1)"
+                                    ng-blur="inputBlur(2,1)" ng-keydown="handleKeyNavigation($event,2,1)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible21">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,1)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad21" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+
+                            <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(1);"
+                                ng-click="pop_out_consumables(1)">
+                        </div>
+                        <div ng-if="isRecordFound21" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,1)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c2" ng-click="flag_consumables(2,1,c2)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="consumables_input not_visible_consumables" id="consumable_input">
+                        <div class="prescriptionInputs">
+
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search2" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search2,2,2)" ng-focus="inputFocus(2,2)"
+                                    ng-blur="inputBlur(2,2)" ng-keydown="handleKeyNavigation($event,2,2)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible22">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,2)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad22" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+
+                            <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(2);"
+                                ng-click="pop_out_consumables(2)">
+                        </div>
+                        <div ng-if="isRecordFound22" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c3" ng-click="flag_consumables(2,2,c3)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="consumables_input not_visible_consumables" id="consumable_input">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search3" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search3,2,3)" ng-focus="inputFocus(2,3)"
+                                    ng-blur="inputBlur(2,3)" ng-keydown="handleKeyNavigation($event,2,3)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible23">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,3)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad23" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+
+                            <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(3);"
+                                ng-click="pop_out_consumables(3)">
+                        </div>
+                        <div ng-if="isRecordFound23" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,3)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c4" ng-click="flag_consumables(2,3,c4)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="consumables_input not_visible_consumables" id="consumable_input">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search4" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search4,2,4)" ng-focus="inputFocus(2,4)"
+                                    ng-blur="inputBlur(2,4)" ng-keydown="handleKeyNavigation($event,2,4)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible24">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,4)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad24" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+
+                            <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(4);"
+                                ng-click="pop_out_consumables(4)">
+                        </div>
+                        <div ng-if="isRecordFound24" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,4)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c5" ng-click="flag_consumables(2,4,c5)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="consumables_input not_visible_consumables" id="consumable_input">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search5" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search,2,5)" ng-focus="inputFocus(2,5)"
+                                    ng-blur="inputBlur(2,5)" ng-keydown="handleKeyNavigation($event,2,5)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible25">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,5)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad25" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+
+                            <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(5);"
+                                ng-click="pop_out_consumables(5)">
+                        </div>
+                        <div ng-if="isRecordFound25" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,5)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c6" ng-click="flag_consumables(2,5,c6)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="consumables_input not_visible_consumables" id="consumable_input">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search6" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search6,2,6)" ng-focus="inputFocus(2,6)"
+                                    ng-blur="inputBlur(2,6)" ng-keydown="handleKeyNavigation($event,2,6)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible26">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,6)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad26" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+
+                            <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(6);"
+                                ng-click="pop_out_consumables(6)">
+                        </div>
+                        <div ng-if="isRecordFound26" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,6)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c7" ng-click="flag_consumables(2,6,c7)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="consumables_input not_visible_consumables" id="consumable_input">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search7" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search,2,7)" ng-focus="inputFocus(2,7)"
+                                    ng-blur="inputBlur(2,7)" ng-keydown="handleKeyNavigation($event,2,7)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible27">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,7)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad27" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+
+                            <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(7);"
+                                ng-click="pop_out_consumables(7)">
+                        </div>
+                        <div ng-if="isRecordFound27" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,7)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c8" ng-click="flag_consumables(2,7,c8)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="consumables_input not_visible_consumables" id="consumable_input">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search8" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search8,2,8)" ng-focus="inputFocus(2,8)"
+                                    ng-blur="inputBlur(2,8)" ng-keydown="handleKeyNavigation($event,2,8)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible28">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,8)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad28" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+
+                            <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(8);"
+                                ng-click="pop_out_consumables(8)">
+                        </div>
+                        <div ng-if="isRecordFound28" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,8)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c9" ng-click="flag_consumables(2,8,c9)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                    <div class="consumables_input not_visible_consumables" id="consumable_input">
+                        <div class="prescriptionInputs">
+                            <div class="input-dropdown">
+                                <input type="text" class="enter_consumable_name" placeholder="Walker"
+                                    ng-model="consumable_search9" ng-required="inputRequired"
+                                    ng-change="search_diagnosis(consumable_search,2,9)" ng-focus="inputFocus(2,9)"
+                                    ng-blur="inputBlur(2,9)" ng-keydown="handleKeyNavigation($event,2,9)">
+                                <!-- ng-click="selectItem(item)" -->
+                                <ul class="dropDownList" ng-show="dropdownVisible29">
+                                    <li ng-repeat="consumables in filteredArray"
+                                        ng-click="push_consumables(consumables.diagnosis_name,consumables.id,2,9)"
+                                        ng-mouseenter="setActive($index)" ng-mousedown="dropdownPressed()"
+                                        ng-class="{'active': activeItemIndex === $index}">
+                                        <span ng-if="consumables.diagnosis_name"
+                                            class="diagnosisName">{{consumables.diagnosis_name}}</span>
+                                        <span ng-if="!consumables.diagnosis_name"
+                                            class="diagnosisName">{{consumables.diagnosis_name}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="loaderImageContainer">
+                                <img ng-src="./loader.gif" alt='loading data' ng-if="isLoad29" class="loaderImage">
+                            </div>
+                            <img class="add_consumable" src="./Group_38.svg"
+                                onclick="add_input_remove_input_consumables();">
+                            <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(9);"
+                                ng-click="pop_out_consumables(9)">
+                        </div>
+                        <div ng-if="isRecordFound29" class='noRecords'>No Records Found</div>
+                        <div class="consumables_search_display">
+                            <ul>
+                                <li ng-repeat="consumables in consumables_search_results"
+                                    ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,9)">
+                                    {{consumables.diagnosis_name}}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bottom_checks">
+                            <input type="checkbox" ng-model="c10" ng-click="flag_consumables(2,9,c10)">&nbsp;&nbsp;<span
+                                style="font-size:17px">Flag</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="action_buttons">
+                <button class="save_button" ng-click="save_converted_prescription()">SAVE</button>
+                <button class="refresh_button" onclick="ClearFields();">REFRESH</button>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

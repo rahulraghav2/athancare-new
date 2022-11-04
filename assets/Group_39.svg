@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="69" height="69" viewBox="0 0 69 69">
+    <defs>
+        <style>
+            .cls-1,.cls-4{fill:none}.cls-1{stroke:#2886af;stroke-width:2px}.cls-2{fill:#2886af}.cls-3{stroke:none}.cls-5{filter:url(#Ellipse_6)}
+        </style>
+        <filter id="Ellipse_6" width="69" height="69" x="0" y="0" filterUnits="userSpaceOnUse">
+            <feOffset dy="3"/>
+            <feGaussianBlur result="blur" stdDeviation="3"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite in2="blur" operator="in"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+    </defs>
+    <g id="Group_39" data-name="Group 39" transform="translate(-1652 -147)">
+        <g class="cls-5" transform="translate(1652 147)">
+            <g id="Ellipse_6-2" class="cls-1" data-name="Ellipse 6" transform="translate(9 6)">
+                <circle cx="25.5" cy="25.5" r="25.5" class="cls-3"/>
+                <circle cx="25.5" cy="25.5" r="24.5" class="cls-4"/>
+            </g>
+        </g>
+        <path id="Rectangle_19" d="M0 0h2.061v25.242H0z" class="cls-2" data-name="Rectangle 19" transform="rotate(45 643.403 2129.17)"/>
+        <path id="Rectangle_20" d="M0 0h2.061v25.242H0z" class="cls-2" data-name="Rectangle 20" transform="rotate(135 809.024 444.58)"/>
+    </g>
+</svg>

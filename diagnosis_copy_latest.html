@@ -1,0 +1,2602 @@
+<html>
+
+<head>
+    <title>Diagnosis</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        /* width */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #2886af;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        body {
+            object-fit: contain;
+            opacity: 1;
+            background-color: #d1e1e8;
+        }
+
+        #header_nav {
+            width: 100%;
+            height: 60px;
+            object-fit: contain;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            background-color: #ffffff;
+            position: fixed;
+            z-index: 999999;
+        }
+
+        #header_nav img {
+            width: 150px;
+            height: 60px;
+            object-fit: contain;
+            position: relative;
+            left: 20px;
+        }
+
+        #header_nav p {
+            position: fixed;
+            right: 80px;
+            top: 20px;
+        }
+
+        #logout_arrow {
+            position: absolute;
+            top: 0px;
+            cursor: pointer;
+            margin-left: -15px;
+        }
+
+
+        #prescriptions_wrapper {
+            width: 45%;
+            /* border: 1px solid black; */
+            height: 86%;
+            padding: 10px;
+            /* background: #ffffff; */
+            z-index: 9999;
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            overflow: scroll;
+        }
+
+        #prescriptions_wrapper img {
+            /* border: 1px solid black; */
+            margin-top: 10px;
+            min-height: 500px;
+            /* margin-bottom: 5px; */
+        }
+
+        .carousel-inner {
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        #pres_image {
+            width: 100%;
+            height: auto;
+            z-index: 999;
+        }
+
+        .prescriptions {
+            width: 100px;
+            height: 150px;
+            /* border: 1px solid black; */
+            float: left;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            /* background: #ffffff; */
+        }
+
+        #prescription_convert_wrapper {
+            position: absolute;
+            width: 47%;
+            min-height: 500px;
+            height: auto;
+            /* background: red; */
+            right: 0px;
+            top: 80px;
+            height: 86%;
+            overflow: scroll;
+            overflow-x: hidden;
+        }
+
+        .medicine_details_form {
+            width: 430px;
+            height: 450px;
+            object-fit: contain;
+            border-radius: 42px;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            background-color: #ffffff;
+        }
+
+        .tests_form,
+        .procedures_form,
+        .consumables_form {
+            width: 430px;
+            min-height: 230px;
+            height: auto;
+            object-fit: contain;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            background-color: #ffffff;
+            top: 20px;
+            position: relative;
+            /* overflow: scroll; */
+            /* overflow: hidden; */
+            border-radius: 10px;
+            /* border: solid .5px; */
+            margin-bottom: 40px;
+        }
+
+        .tests_form .head,
+        .procedures_form .head,
+        .consumables_form .head {
+            width: 430px;
+            height: 60px;
+            object-fit: contain;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            background-color: #2886af;
+            position: relative;
+            top: -10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .tests_form .head h4,
+        .procedures_form .head h4,
+        .consumables_form .head h4 {
+            height: 29px;
+            object-fit: contain;
+            font-family: ProximaNova;
+            font-size: 20px;
+            font-weight: 600;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: 3;
+            letter-spacing: normal;
+            text-align: left;
+            color: #ffffff;
+            position: relative;
+            left: 30px;
+        }
+
+        .doctor_referral_form {
+            width: 430px;
+            ;
+            height: 111px;
+            object-fit: contain;
+            border-radius: 24px;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            background-color: #ffffff;
+            position: relative;
+            top: 40px;
+            margin-bottom: 40px;
+        }
+
+        .enter_test_name,
+        .enter_procedure_name,
+        .enter_consumable_name {
+            width: 250px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            border: solid 1px #e3e3e3;
+            background-color: #ffffff;
+            outline: none;
+            color: #2886af;
+            text-align: center;
+            position: relative;
+            top: 50px;
+            left: 40px;
+        }
+
+        .enter_medicine_qty {
+            width: 100px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            border: solid 1px #e3e3e3;
+            background-color: #ffffff;
+            outline: none;
+            color: #2886af;
+            text-align: center;
+            position: relative;
+            top: 40px;
+            left: 60px;
+        }
+
+        #digitalize_by {
+            width: 430px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 11px;
+            border: solid 1px #707070;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        #digitalize_by p {
+            position: relative;
+            left: 40px;
+            font-family: ProximaNova;
+            font-size: 15px;
+            font-weight: 600;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: 4;
+            letter-spacing: normal;
+            text-align: left;
+            color: #000000;
+        }
+
+        #flag_this {
+            width: 430px;
+            /* background: red; */
+            text-align: center;
+            position: relative;
+            top: 10px;
+            padding: 5px;
+            color: #000000;
+            overflow: hidden;
+        }
+
+        .add_consumable,
+        .add_procedure {
+            width: 51px;
+            height: 51px;
+            object-fit: contain;
+            position: relative;
+            top: 55px;
+            left: 50px;
+            cursor: pointer;
+            z-index: 9999;
+        }
+
+        .add_test {
+            width: 51px;
+            height: 51px;
+            object-fit: contain;
+            position: relative;
+            top: 5px;
+            left: 10px;
+            cursor: pointer;
+        }
+
+        .remove_test,
+        .remove_procedure,
+        .remove_consumables {
+            width: 51px;
+            height: 51px;
+            object-fit: contain;
+            position: relative;
+            top: 55px;
+            left: 50px;
+            cursor: pointer;
+        }
+
+        .bottom_checks {
+            /* background: red; */
+            padding: 10px;
+            position: relative;
+            font-family: ProximaNova;
+            font-size: 25px;
+            font-weight: 600;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: 1.2;
+            letter-spacing: normal;
+            text-align: left;
+            color: #000000;
+            top: 40px;
+            left: 40px;
+
+        }
+
+        #action_buttons {
+            width: 200px;
+            height: 80px;
+            position: fixed;
+            top: 600px;
+            right: 10px;
+            /* background: red; */
+            /* margin-bottom: 20px; */
+        }
+
+        .save_button {
+            width: 70px;
+            height: 40px;
+            border-radius: 10px;
+            position: relative;
+            float: left;
+            border: none;
+            font-size: 13px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .refresh_button {
+            width: 70px;
+            height: 40px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            position: relative;
+            left: 30px;
+            border: none;
+            font-size: 13px;
+            color: #2886af;
+            cursor: pointer;
+        }
+
+        .save_button {
+            background-color: #2886af;
+        }
+
+        #zoom_buttons {
+            position: relative;
+            width: 50px;
+            height: 82%;
+            /* background: #ffffff; */
+            /* left: 470px; */
+            left: 490px;
+            display: block;
+            top: 80px;
+        }
+
+        #zooms {
+            background: #ffffff;
+            position: relative;
+            width: 40px;
+            height: 90px;
+            padding: 10px;
+            border-radius: 37px;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+        }
+
+        #zooms img {
+            width: 25px;
+            height: 25px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        #next_icons {
+            background: #ffffff;
+            position: relative;
+            width: 40px;
+            height: 90px;
+            padding: 10px;
+            border-radius: 37px;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            margin-top: 20px;
+        }
+
+        #next_icons i {
+            width: 25px;
+            height: 25px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            line-height: 2;
+            margin-left: 5px;
+        }
+
+        /* #logout {
+            width: 110px;
+            height: 40px;
+            background: white;
+            position: relative;
+            top: 60px;
+            float: right;
+            right: 60px;
+            z-index: 99999;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            border-bottom-right-radius: 20px;
+            border-bottom-left-radius: 20px;
+            display: none;
+            text-align: center;
+            z-index: 9999;
+        }
+
+        #logout p {
+            line-height: 0;
+            position: relative;
+            left: 0px;
+        }
+
+        #logout:hover {
+            cursor: pointer;
+            background: #2886af;
+            color: white;
+        } */
+
+        #logout {
+            width: 110px;
+            height: auto;
+            background: white;
+            position: relative;
+            top: 60px;
+            float: right;
+            right: 60px;
+            z-index: 99999;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            border-bottom-right-radius: 20px;
+            border-bottom-left-radius: 20px;
+            display: none;
+            z-index: 9999;
+        }
+
+        #logout ul li {
+            text-align: left;
+            list-style-type: none;
+            padding: 5px;
+            position: relative;
+            left: 10px;
+            width: 90px;
+        }
+
+        #logout ul li:hover {
+            background: #2886af;
+            cursor: pointer;
+            color: white;
+        }
+
+
+        .test_search_display,
+        .procedures_search_display,
+        .consumables_search_display {
+            width: 250px;
+            min-height: 30px;
+            max-height: 300px;
+            height: auto;
+            overflow: scroll;
+            overflow-x: hidden;
+            background: #f1f1f1;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.6);
+            position: relative;
+            top: 50px;
+            left: 40px;
+            display: none;
+            z-index: 9999999;
+        }
+
+        .test_search_display ul li,
+        .procedures_search_display ul li,
+        .consumables_search_display ul li {
+            list-style-type: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .test_search_display ul li:nth-child(even),
+        .procedures_search_display ul li:nth-child(even),
+        .consumables_search_display ul li:nth-child(even) {
+            background: #E0E0E0;
+        }
+
+        .test_search_display ul li:hover,
+        .procedures_search_display ul li:hover,
+        .consumables_search_display ul li:hover {
+            background: #2886af;
+            color: white;
+        }
+
+        .not_visible,
+        .not_visible_consumables,
+        .not_visible_procedures {
+            display: none;
+        }
+
+        .modal-confirm {
+            color: #636363;
+            width: 400px;
+        }
+
+        .modal-confirm .modal-content {
+            padding: 20px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .modal-confirm .modal-header {
+            border-bottom: none;
+            position: relative;
+        }
+
+        .modal-confirm h4 {
+            text-align: center;
+            font-size: 26px;
+            margin: 30px 0 -10px;
+        }
+
+        .modal-confirm .close {
+            position: absolute;
+            top: -5px;
+            right: -2px;
+        }
+
+        .modal-confirm .modal-body {
+            color: #999;
+        }
+
+        .modal-confirm .modal-footer {
+            border: none;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 13px;
+            padding: 10px 15px 25px;
+        }
+
+        .modal-confirm .modal-footer a {
+            color: #999;
+        }
+
+        .modal-confirm .icon-box {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            border-radius: 50%;
+            z-index: 9;
+            text-align: center;
+            border: 3px solid #f15e5e;
+        }
+
+        .modal-confirm .icon-box i {
+            color: #f15e5e;
+            font-size: 46px;
+            display: inline-block;
+            margin-top: 13px;
+        }
+
+        .modal-confirm .btn {
+            color: #fff;
+            border-radius: 4px;
+            background: #60c7c1;
+            text-decoration: none;
+            transition: all 0.4s;
+            line-height: normal;
+            min-width: 120px;
+            border: none;
+            min-height: 40px;
+            border-radius: 3px;
+            margin: 0 5px;
+            outline: none !important;
+        }
+
+        .modal-confirm .btn-info {
+            background: #c1c1c1;
+        }
+
+        .modal-confirm .btn-info:hover,
+        .modal-confirm .btn-info:focus {
+            background: #a8a8a8;
+        }
+
+        .modal-confirm .btn-danger {
+            background: #f15e5e;
+        }
+
+        .modal-confirm .btn-danger:hover,
+        .modal-confirm .btn-danger:focus {
+            background: #ee3535;
+        }
+
+        .trigger-btn {
+            display: inline-block;
+            margin: 100px auto;
+        }
+
+        .test_suggestion {
+            display: none;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        textarea {
+            font-size: 13px;
+            font-weight: normal;
+            width: 250px;
+            height: 30px;
+            outline: none;
+            color: #2886af;
+            box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+            border: solid 1px #e3e3e3;
+            background-color: #ffffff;
+            padding: 5px;
+            position: relative;
+            left: -10px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="./work.js"></script>
+    <script>
+        function zoom_image(direct) {
+
+            var prescription = document.getElementById("myCarousel");
+
+            if (direct == 'in') {
+                if (prescription.style.width != '' && Number(prescription.style.width.replace('%', '')) <= 180) {
+                    var width = prescription.style.width.replace('%', '');
+                    prescription.style.width = Number(width) + Number(20) + '%';
+                } else if (prescription.style.width == '')
+                    prescription.style.width = '120%';
+            } else if (Number(prescription.style.width.replace('%', '')) > 100) {
+                var width = prescription.style.width.replace('%', '');
+                prescription.style.width = Number(width) - Number(20) + '%';
+            }
+        }
+
+        function logout_card() {
+            var logout = document.getElementById("logout");
+
+            if (logout.style.display == '' || logout.style.display == null || logout.style.display == 'none') {
+                logout.style.display = "block";
+            } else {
+                logout.style.display = "none";
+            }
+
+        }
+
+        function ClearFields() {
+            $('input').val('');
+        }
+    </script>
+    <link href="./select2_diagnosis.css" rel="stylesheet" />
+    <script src="./selectbox_diagnosis/select2.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script>
+        var app = angular.module('testApp', [])
+        app.controller('myCtrl', function ($scope, $http, $interval, $timeout) {
+            $scope.check_user = function () {
+                promt_for_id();
+            }
+
+            var fix_time;
+            var first_time = 0;
+            var total_digitization_time = 0;
+
+            function startTime() {
+                var today = new Date();
+
+                if (first_time == 0) {
+                    fix_time = today;
+                    first_time = 1;
+                }
+                var h = today.getHours();
+                var m = today.getMinutes();
+                var s = today.getSeconds();
+                m = checkTime(m);
+                s = checkTime(s);
+
+                total_digitization_time = Math.floor((today.getTime() - fix_time.getTime()) / 1000);
+                document.getElementById('txt').innerHTML =
+                    "Time Taken - " + total_digitization_time + "s";
+
+                var t = setTimeout(startTime, 500);
+            }
+
+            function checkTime(i) {
+                if (i < 10) {
+                    i = "0" + i
+                }; // add zero in front of numbers < 10
+                return i;
+            }
+
+            function promt_for_id() {
+                if (window.localStorage.getItem('id', id) == undefined) {
+
+                    var id = prompt("Confrim your identity");
+                    if (id != null && id.trim().length > 0) {
+                        $http.get('http://192.168.1.55:9090/check_user/' + id)
+                            .then(function (response) {
+                                if (response.status == 200) {
+                                    window.localStorage.setItem('id', response.data);
+                                    $scope.user = window.localStorage.getItem('id', id);
+                                    // window.location.reload();
+                                    $('body').fadeTo("slow", 1);
+                                    $scope.getPrescriptions(800);
+                                    startTime();
+                                } else {
+                                    $('body').fadeTo("slow", 0);
+                                    promt_for_id();
+                                }
+                            }).catch(function (error) {
+                                $('body').fadeTo("slow", 0);
+                                promt_for_id();
+                            })
+                    } else {
+                        $('body').fadeTo("slow", 0);
+                        promt_for_id();
+                    }
+                } else {
+                    $('body').fadeTo("slow", 1);
+                    $scope.getPrescriptions(800);
+                    startTime();
+                }
+            }
+
+            $scope.prescription_arr = [];
+            var pres_arr_all = [];
+            var n = 0;
+
+            $scope.getPrescriptions = function (appt_id) {
+                $scope.user = window.localStorage.getItem('id')
+                var data = {};
+                data.appointment_id = appt_id;
+                $http({
+                    method: 'POST',
+                    url: 'http://192.168.1.55:9090/get_Doctor_Prescriptions',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: angular.toJson(data)
+                }).then(function (response) {
+                    pres_arr_all = response.data;
+                    $scope.prescription_arr = pres_arr_all[n];
+                })
+            }
+
+            $scope.next_appt_pres = function (direct) {
+
+                if (direct == 'forward' && n < pres_arr_all.length - 1) {
+                    n = n + 1;
+                    $scope.prescription_arr = pres_arr_all[n];
+                } else if (n > 0 && direct == 'back') {
+                    n--;
+                    $scope.prescription_arr = pres_arr_all[n];
+                }
+            }
+
+            $scope.tests_search_results = [];
+            $scope.procedure_search_results = [];
+            $scope.consumables_search_results = [];
+
+            var selected_input, selected_str = "";
+
+            $scope.search_diagnosis = function (search_str, type, pos) {
+
+                var test_search_display = document.getElementsByClassName("test_search_display");
+                var procedures_search_display = document.getElementsByClassName(
+                    "procedures_search_display");
+                var consumables_search_display = document.getElementsByClassName(
+                    "consumables_search_display");
+
+                var TestDiv = document.getElementsByClassName('tests_form');
+                var procedures_form = document.getElementsByClassName('procedures_form');
+                var consumables_form = document.getElementsByClassName('consumables_form');
+
+
+                if (search_str.trim().length != 0) {
+                    var data = {};
+
+                    selected_input = pos;
+                    if (pos == 0)
+                        selected_str = $scope["test_search"];
+                    else
+                        selected_str = $scope["test_search" + pos];
+                    console.log("Search str is", selected_str, pos)
+
+                    data.search_string = search_str;
+                    data.test_type = type;
+
+                    $http({
+                        method: 'POST',
+                        url: 'http://192.168.1.55:9090/get_lab_diagnosisTests',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: angular.toJson(data)
+                    }).then(function (response) {
+
+                        if (type == 0) {
+                            $scope.tests_search_results = response.data;
+                            if (response.data.length == 0) {
+                                $scope.tests_search_results = [{
+                                    "diagnosis_name": search_str + " (Add New)"
+                                }]
+                            }
+                            test_search_display[pos].style.display = "block";
+                            // TestDiv[0].style.height = "420px";
+                        } else if (type == 1) {
+                            $scope.procedure_search_results = response.data;
+                            if (response.data.length == 0)
+                                $scope.procedure_search_results = [{
+                                    "diagnosis_name": search_str + " (Add New)"
+                                }]
+                            procedures_search_display[pos].style.display = "block";
+                            // procedures_form[0].style.height = "400px";
+                        } else {
+                            $scope.consumables_search_results = response.data;
+                            if (response.data.length == 0)
+                                $scope.consumables_search_results = [{
+                                    "diagnosis_name": search_str + " (Add New)"
+                                }]
+                            consumables_search_display[pos].style.display = "block";
+                            // consumables_form[0].style.height = "400px";
+                        }
+
+                    })
+                } else {
+                    if (type == 0) {
+                        $scope.tests_search_results = [];
+                        test_search_display[pos].style.display = "none";
+                        // TestDiv[0].style.height = "200px";
+                    } else if (type == 1) {
+                        $scope.procedure_search_results = [];
+                        procedures_search_display[pos].style.display = "none";
+                        // procedures_form[0].style.height = "200px";
+                    } else {
+                        $scope.consumables_search_results = [];
+                        consumables_search_display[0].style.display = "none";
+                        // consumables_form[0].style.height = "200px";
+                    }
+                }
+
+            }
+            $scope.f1 = false, $scope.f2 = false, $scope.f3 = false, $scope.f4 = false, $scope.f5 = false,
+                $scope.f6 = false, $scope.f7 = false, $scope.f8 = false, $scope.f9 = false, $scope.f10 = false;
+
+            $scope.flag_test = function (type, pos, is_flag) {
+
+                console.log("Inside flag", type, pos, is_flag);
+                if (pos == 0) {
+                    $scope.f1 = is_flag;
+                    // tests_selected[0].flag = $scope.f1;
+                }
+                if (pos == 1) {
+                    $scope.f2 = is_flag;
+                    // tests_selected[1].flag = $scope.f2;
+
+                }
+                if (pos == 2) {
+                    $scope.f3 = is_flag;
+                    // tests_selected[2].flag = $scope.f3;
+
+                }
+
+                if (pos == 3) {
+                    $scope.f4 = is_flag;
+                    // tests_selected[3].flag = $scope.f4;
+
+                }
+
+                if (pos == 4) {
+                    $scope.f5 = is_flag;
+                    // tests_selected[4].flag = $scope.f5;
+
+                }
+
+                if (pos == 5) {
+                    $scope.f6 = is_flag;
+                    // tests_selected[5].flag = $scope.f6;
+
+                }
+
+                if (pos == 6) {
+                    $scope.f7 = is_flag;
+                    // tests_selected[6].flag = $scope.f7;
+
+                }
+
+                if (pos == 7) {
+                    $scope.f8 = is_flag;
+                    // tests_selected[7].flag = $scope.f8;
+
+                }
+
+                if (pos == 8) {
+                    $scope.f9 = is_flag;
+                    // tests_selected[8].flag = $scope.f9;
+
+                }
+
+                if (pos == 9) {
+                    $scope.f10 = is_flag;
+                    // tests_selected[9].flag = $scope.f10;
+
+                }
+                if (pos == 10) {
+                    $scope.f11 = is_flag;
+                    // tests_selected[10].flag = $scope.f11;
+
+                }
+                if (pos == 11) {
+                    $scope.f12 = is_flag;
+                    // tests_selected[11].flag = $scope.f12;
+
+                }
+                if (pos == 12) {
+                    $scope.f13 = is_flag;
+                    // tests_selected[12].flag = $scope.f13;
+
+                }
+                if (pos == 13) {
+                    $scope.f14 = is_flag;
+                    // tests_selected[13].flag = $scope.f14;
+
+                }
+                if (pos == 14) {
+                    $scope.f15 = is_flag;
+                    // tests_selected[14].flag = $scope.f15;
+
+                }
+            }
+            var tests_selected = [];
+            $scope.push_tests = function (test, id, pos) {
+
+                document.getElementsByClassName("test_search_display")[pos].style.display = "none";
+
+                document.getElementsByClassName("tests_form")[0].style.height += Number(document
+                        .getElementsByClassName("tests_form")[0].style.height.replace('px', '')) + 100 +
+                    "px";
+
+                var data = {};
+
+                if (test.trim() != '' && test.trim().length != 0) {
+                    test = test.replace(' (Add New)', '');
+
+                    if (pos == 0) {
+                        $scope.test_search = test;
+                        data.flag = $scope.f1;
+                    }
+                    if (pos == 1) {
+                        $scope.test_search1 = test;
+                        data.flag = $scope.f2;
+                    }
+                    if (pos == 2) {
+                        $scope.test_search2 = test;
+                        data.flag = $scope.f3;
+                    }
+
+                    if (pos == 3) {
+                        $scope.test_search3 = test;
+                        data.flag = $scope.f4;
+                    }
+
+                    if (pos == 4) {
+                        $scope.test_search4 = test;
+                        data.flag = $scope.f5;
+                    }
+
+                    if (pos == 5) {
+                        $scope.test_search5 = test;
+                        data.flag = $scope.f6;
+                    }
+
+                    if (pos == 6) {
+                        $scope.test_search6 = test;
+                        data.flag = $scope.f7;
+                    }
+
+                    if (pos == 7) {
+                        $scope.test_search7 = test;
+                        data.flag = $scope.f8;
+                    }
+
+                    if (pos == 8) {
+                        $scope.test_search8 = test;
+                        data.flag = $scope.f9;
+                    }
+
+                    if (pos == 9) {
+                        $scope.test_search9 = test;
+                        data.flag = $scope.f10;
+                    }
+                    if (pos == 10) {
+                        $scope.test_search10 = test;
+                        data.flag = $scope.f11;
+                    }
+                    if (pos == 11) {
+                        $scope.test_search11 = test;
+                        data.flag = $scope.f12;
+                    }
+                    if (pos == 12) {
+                        $scope.test_search12 = test;
+                        data.flag = $scope.f13;
+                    }
+                    if (pos == 13) {
+                        $scope.test_search13 = test;
+                        data.flag = $scope.f14;
+                    }
+                    if (pos == 14) {
+                        $scope.test_search14 = test;
+                        data.flag = $scope.f15;
+                    }
+
+                    if (id == undefined)
+                        data.diagnosis_id = 'null';
+                    else
+                        data.diagnosis_id = id;
+
+                    data.diagnosis_name = test;
+
+                    // tests_selected.push(data);
+                    tests_selected[pos] = data;
+                }
+            }
+
+            $scope.p1 = false, $scope.p2 = false, $scope.p3 = false, $scope.p4 = false, $scope.p5 = false,
+                $scope.p6 = false, $scope.p7 = false, $scope.p8 = false, $scope.p9 = false, $scope.p10 = false;
+
+            $scope.flag_procedures = function (type, pos, is_flag) {
+
+                if (pos == 0) {
+                    $scope.p1 = is_flag;
+                    procedures_selected[0].flag = $scope.p1;
+                }
+                if (pos == 1) {
+                    $scope.p2 = is_flag;
+                    procedures_selected[1].flag = $scope.p2;
+
+                }
+                if (pos == 2) {
+                    $scope.p3 = is_flag;
+                    procedures_selected[2].flag = $scope.p3;
+
+                }
+
+                if (pos == 3) {
+                    $scope.p4 = is_flag;
+                    procedures_selected[3].flag = $scope.p4;
+
+                }
+
+                if (pos == 4) {
+                    $scope.p5 = is_flag;
+                    procedures_selected[4].flag = $scope.p5;
+
+                }
+
+                if (pos == 5) {
+                    $scope.p6 = is_flag;
+                    procedures_selected[5].flag = $scope.p6;
+
+                }
+
+                if (pos == 6) {
+                    $scope.p7 = is_flag;
+                    procedures_selected[6].flag = $scope.p7;
+
+                }
+
+                if (pos == 7) {
+                    $scope.p8 = is_flag;
+                    procedures_selected[7].flag = $scope.p8;
+
+                }
+
+                if (pos == 8) {
+                    $scope.p9 = is_flag;
+                    procedures_selected[8].flag = $scope.p9;
+
+                }
+
+                if (pos == 9) {
+                    $scope.p10 = is_flag;
+                    procedures_selected[9].flag = $scope.p10;
+
+                }
+            }
+            var procedures_selected = [];
+            $scope.push_procedures = function (procedure, id, pos) {
+                document.getElementsByClassName("procedures_search_display")[pos].style.display = "none";
+
+                document.getElementsByClassName("procedures_form")[0].style.height += Number(document
+                        .getElementsByClassName("procedures_form")[0].style.height.replace('px', '')) +
+                    100 + "px";
+
+                var data = {};
+                if (procedure.trim() != '' && procedure.trim().length != 0 && procedure !=
+                    'No results found') {
+
+                    procedure = procedure.replace(' (Add New)', '');
+                    if (pos == 0) {
+                        $scope.procedure_search = procedure;
+                        data.flag = $scope.p1;
+                    }
+                    if (pos == 1) {
+                        $scope.procedure_search1 = procedure;
+                        data.flag = $scope.p2;
+                    }
+                    if (pos == 2) {
+                        $scope.procedure_search2 = procedure;
+                        data.flag = $scope.p3;
+                    }
+
+                    if (pos == 3) {
+                        $scope.procedure_search3 = procedure;
+                        data.flag = $scope.p4;
+                    }
+
+                    if (pos == 4) {
+                        $scope.procedure_search4 = procedure;
+                        data.flag = $scope.p5;
+                    }
+
+                    if (pos == 5) {
+                        $scope.procedure_search5 = procedure;
+                        data.flag = $scope.p6;
+                    }
+
+                    if (pos == 6) {
+                        $scope.procedure_search6 = procedure;
+                        data.flag = $scope.p7;
+                    }
+
+                    if (pos == 7) {
+                        $scope.procedure_search7 = procedure;
+                        data.flag = $scope.p8;
+                    }
+
+                    if (pos == 8) {
+                        $scope.procedure_search8 = procedure;
+                        data.flag = $scope.p9;
+                    }
+
+                    if (pos == 9) {
+                        $scope.procedure_search9 = procedure;
+                        data.flag = $scope.p10;
+                    }
+
+                    if (id == undefined)
+                        data.diagnosis_id = 'null';
+                    else
+                        data.diagnosis_id = id;
+
+                    data.diagnosis_name = procedure;
+
+                    procedures_selected[pos] = data;
+
+                }
+
+            }
+
+            $scope.c1 = false, $scope.c2 = false, $scope.c3 = false, $scope.c4 = false, $scope.c5 = false,
+                $scope.c6 = false, $scope.c7 = false, $scope.c8 = false, $scope.c9 = false, $scope.c10 = false;
+
+            $scope.flag_consumables = function (type, pos, is_flag) {
+
+                if (pos == 0) {
+                    $scope.c1 = is_flag;
+                    consumables_selected[0].flag = $scope.c1;
+                }
+                if (pos == 1) {
+                    $scope.c2 = is_flag;
+                    consumables_selected[1].flag = $scope.c2;
+
+                }
+                if (pos == 2) {
+                    $scope.c3 = is_flag;
+                    consumables_selected[2].flag = $scope.c3;
+
+                }
+
+                if (pos == 3) {
+                    $scope.c4 = is_flag;
+                    consumables_selected[3].flag = $scope.c4;
+
+                }
+
+                if (pos == 4) {
+                    $scope.c5 = is_flag;
+                    consumables_selected[4].flag = $scope.c5;
+
+                }
+
+                if (pos == 5) {
+                    $scope.c6 = is_flag;
+                    consumables_selected[5].flag = $scope.c6;
+
+                }
+
+                if (pos == 6) {
+                    $scope.c7 = is_flag;
+                    consumables_selected[6].flag = $scope.c7;
+
+                }
+
+                if (pos == 7) {
+                    $scope.c8 = is_flag;
+                    consumables_selected[7].flag = $scope.c8;
+
+                }
+
+                if (pos == 8) {
+                    $scope.c9 = is_flag;
+                    consumables_selected[8].flag = $scope.c9;
+
+                }
+
+                if (pos == 9) {
+                    $scope.c10 = is_flag;
+                    consumables_selected[9].flag = $scope.c10;
+
+                }
+            }
+
+            var consumables_selected = [];
+            $scope.push_consumables = function (consumable, id, pos) {
+                document.getElementsByClassName("consumables_search_display")[pos].style.display = "none";
+
+                document.getElementsByClassName("consumables_form")[0].style.height += Number(document
+                        .getElementsByClassName("consumables_form")[0].style.height.replace('px', '')) +
+                    100 + "px";
+
+                if (consumable.trim() != '' && consumable.trim().length != 0 && consumable !=
+                    'No results found') {
+                    consumable = consumable.replace(' (Add New)', '');
+                    var data = {};
+                    if (pos == 0) {
+                        data.flag = $scope.c1;
+                        $scope.consumable_search = consumable;
+                    }
+                    if (pos == 1) {
+                        data.flag = $scope.c2;
+                        $scope.consumable_search1 = consumable;
+                    }
+                    if (pos == 2) {
+                        data.flag = $scope.c3;
+                        $scope.consumable_search2 = consumable;
+                    }
+
+                    if (pos == 3) {
+                        data.flag = $scope.c4;
+                        $scope.consumable_search3 = consumable;
+                    }
+
+                    if (pos == 4) {
+                        data.flag = $scope.c5;
+                        $scope.consumable_search4 = consumable;
+                    }
+
+                    if (pos == 5) {
+                        data.flag = $scope.c6;
+                        $scope.consumable_search5 = consumable;
+                    }
+
+                    if (pos == 6) {
+                        data.flag = $scope.c7;
+                        $scope.consumable_search6 = consumable;
+                    }
+
+                    if (pos == 7) {
+                        data.flag = $scope.c8;
+                        $scope.consumable_search7 = consumable;
+                    }
+
+                    if (pos == 8) {
+                        data.flag = $scope.c9;
+                        $scope.consumable_search8 = consumable;
+                    }
+
+                    if (pos == 9) {
+                        data.flag = $scope.c10;
+                        $scope.consumable_search9 = consumable;
+                    }
+
+                    if (id == undefined)
+                        data.diagnosis_id = 'null';
+                    else
+                        data.diagnosis_id = id;
+
+                    data.diagnosis_name = consumable;
+
+                    consumables_selected[pos] = data;
+
+                    // consumables_selected.push(id)
+                }
+
+            }
+
+            $scope.pop_out_test = function (pos) {
+
+                if (pos == 0) {
+                    $scope.test_search = null;
+                }
+                if (pos == 1) {
+                    $scope.test_search1 = null;
+                }
+                if (pos == 2) {
+                    $scope.test_search2 = null;
+                }
+
+                if (pos == 3) {
+                    $scope.test_search3 = null;
+                }
+
+                if (pos == 4) {
+                    $scope.test_search4 = null;
+                }
+
+                if (pos == 5) {
+                    $scope.test_search5 = null;
+                }
+
+                if (pos == 6) {
+                    $scope.test_search6 = null;
+                }
+
+                if (pos == 7) {
+                    $scope.test_search7 = null;
+                }
+
+                if (pos == 8) {
+                    $scope.test_search8 = null;
+                }
+
+                if (pos == 9) {
+                    $scope.test_search9 = null;
+                }
+                if (pos == 10) {
+                    $scope.test_search10 = null;
+                }
+                if (pos == 11) {
+                    $scope.test_search11 = null;
+                }
+                if (pos == 12) {
+                    $scope.test_search12 = null;
+                }
+                if (pos == 13) {
+                    $scope.test_search13 = null;
+                }
+                if (pos == 14) {
+                    $scope.test_search14 = null;
+                }
+
+                tests_selected = tests_selected.filter(function (value, index, arr) {
+
+                    return index == pos - 1;
+
+                });
+
+                console.log("tests_selected", tests_selected);
+            }
+
+            $scope.pop_out_procedures = function (pos) {
+                console.log("pos is", pos)
+                if (pos == 0) {
+                    $scope.procedure_search5 = null;
+                }
+                if (pos == 1) {
+                    $scope.procedure_search1 = null;
+                }
+                if (pos == 2) {
+                    $scope.procedure_search2 = null;
+                }
+
+                if (pos == 3) {
+                    $scope.procedure_search3 = null;
+                }
+
+                if (pos == 4) {
+                    $scope.procedure_search4 = null;
+                }
+
+                if (pos == 5) {
+                    $scope.procedure_search5 = null;
+                }
+
+                if (pos == 6) {
+                    $scope.procedure_search6 = null;
+                }
+
+                if (pos == 7) {
+                    $scope.procedure_search7 = null;
+                }
+
+                if (pos == 8) {
+                    $scope.procedure_search8 = null;
+                }
+
+                if (pos == 9) {
+                    $scope.procedure_search9 = null;
+                }
+
+                procedures_selected = procedures_selected.filter(function (value, index, arr) {
+
+                    return index != pos - 1;
+
+                });
+
+                console.log("procedures", procedures_selected);
+            }
+
+            $scope.pop_out_consumables = function (pos) {
+                console.log("pos is", pos)
+                if (pos == 0) {
+                    $scope.consumable_search = null;
+                }
+                if (pos == 1) {
+                    $scope.consumable_search1 = null;
+                }
+                if (pos == 2) {
+                    $scope.consumable_search2 = null;
+                }
+
+                if (pos == 3) {
+                    $scope.consumable_search3 = null;
+                }
+
+                if (pos == 4) {
+                    $scope.consumable_search4 = null;
+                }
+
+                if (pos == 5) {
+                    $scope.consumable_search5 = null;
+                }
+
+                if (pos == 6) {
+                    $scope.consumable_search6 = null;
+                }
+
+                if (pos == 7) {
+                    $scope.consumable_search7 = null;
+                }
+
+                if (pos == 8) {
+                    $scope.consumable_search8 = null;
+                }
+
+                if (pos == 9) {
+                    $scope.consumable_search9 = null;
+                }
+
+
+                consumables_selected = consumables_selected.filter(function (value, index, arr) {
+
+                    return index != pos - 1;
+
+                });
+
+                console.log("procedures", consumables_selected);
+            }
+
+            $scope.save_converted_prescription = function () {
+
+                console.log("precription converted", tests_selected, procedures_selected,
+                    consumables_selected, pres_arr_all[n].img_appt_id)
+
+                var data = {};
+                var data_obj = {};
+
+                data.appointment_id = pres_arr_all[n].img_appt_id;
+                data.procedures = procedures_selected;
+                data.consumables = consumables_selected;
+                data.digitize_time = total_digitization_time;
+
+                var i = 1;
+
+                console.log("Scope + i", tests_selected, $scope.test_search1);
+                while ($scope["test_search" + i] != undefined && $scope["test_search" + i] != null) {
+                    console.log('$scope["test_search" + i]', i);
+                    data_obj.test_suggestion = $scope["suggestion" + i];
+                    data_obj.diagnosis_name = $scope["test_search" + i];
+                    data_obj.flag = $scope["f" + (i + 1)];
+                    tests_selected.push(data_obj);
+                    data_obj = {};
+                    i++;
+                }
+
+
+                data.tests = tests_selected;
+                console.log("Request body made", data);
+
+                n = n + 1;
+                $scope.prescription_arr = pres_arr_all[n];
+                console.log("Inside next_appt_pres", pres_arr_all[n]);
+
+                $http({
+                    method: 'POST',
+                    url: 'http://192.168.1.55:9090/post_converted_diagnosis',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: angular.toJson(data)
+                }).then(function (response) {
+                    console.log("response is", response);
+                    window.location.reload();
+                });
+            }
+
+            // In your Javascript (external .js resource or <script> tag)
+            $(document).ready(function () {
+                $('.js-example-basic-single').select2();
+
+                var data_to_show = [];
+
+                $('.js-data-example-ajax').select2({
+                    ajax: {
+                        url: 'http://192.168.1.55:9090/get_lab_diagnosisTests/',
+                        data: function (params) {
+                            var query = {
+                                search_str: params.term,
+                                test_type: 0
+                            }
+                            console.log("Params", params.term)
+
+                            // Query parameters will be ?search=[term]&type=public
+                            return query;
+                        },
+                        processResults: function (data) {
+                            console.log("response", data)
+                            data_to_show = data;
+                            // Transforms the top-level key of the response object from 'items' to 'results'
+                            return {
+                                results: data.items
+                            }
+                        }
+
+                    },
+                    placeholder: 'Search Diagnosis',
+                    minimumInputLength: 1,
+                    templateResult: formatRepo,
+                    templateSelection: formatRepoSelection
+                });
+            });
+
+            var current_position = 0;
+            $('.select_diagnosis_drop_down').click(function () {
+                current_position = $('.select_diagnosis_drop_down').index(this);
+            })
+
+            function formatRepo(repo) {
+
+                if (repo.loading) {
+                    return repo.text;
+                }
+
+                var $container = $(
+                    "<div class='select2-result-repository clearfix'>" +
+                    "<div class='select2-result-repository__meta'>" +
+                    "<div class='select2-result-medicine_name'></div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>"
+                );
+
+                $container.find(".select2-result-medicine_name").text(repo.diagnosis_name);
+                return $container;
+            }
+
+            function formatRepoSelection(repo) {
+                // console.log("repo.medicine_name", $scope["test_search" + (current_position)]);
+
+                if (repo.diagnosis_name != undefined) {
+                    select_test(repo.diagnosis_name);
+                    return repo.diagnosis_name;
+                } else {
+
+                    // if (current_position == 0) {
+                    //     return $scope["test_search"];
+
+                    // } else {
+                        console.log("Returning value",$scope["test_search" + (current_position + 1)]);
+                    return $scope["test_search" + (current_position + 1)];
+                    // }
+                }
+            }
+
+            function select_test(medicine) {
+
+                console.log("selected test", current_position, medicine, $scope["test_search" + (
+                    current_position)]);
+
+                // if (current_position == 0) {
+                //     $scope["test_search"] = medicine;
+                // } else {
+                $scope["test_search" + (current_position + 1)] = medicine;
+                // }
+            }
+            $scope.comment_test = function (pos) {
+
+                var test_suggestion = document.getElementsByClassName("test_suggestion");
+                var TestDiv = document.getElementsByClassName('tests_form');
+
+                console.log("comment_test", TestDiv[0].style.height.replace('px', ''));
+
+                if (test_suggestion[pos].style.display == '' || test_suggestion[pos].style.display ==
+                    'none') {
+                    test_suggestion[pos].style.display = "block";
+
+                    if (TestDiv[0].style.height.replace('px', '') == '')
+                        TestDiv[0].style.height = Number(TestDiv[0].style.height.replace('px', '')) + 330 +
+                        "px";
+                    else if (TestDiv[0].style.height.replace('px', '') == 100)
+                        TestDiv[0].style.height = Number(TestDiv[0].style.height.replace('px', '')) + 230 +
+                        "px";
+                    else
+                        TestDiv[0].style.height = Number(TestDiv[0].style.height.replace('px', '')) + 120 +
+                        "px";
+                } else {
+                    test_suggestion[pos].style.display = "none";
+                    TestDiv[0].style.height = Number(TestDiv[0].style.height.replace('px', '')) - 120 +
+                        "px";
+                }
+            }
+
+            var everywhere = angular.element(window.document);
+
+            everywhere.bind('click', function (event) {
+                console.log("Clicked", selected_str, selected_input);
+
+                if (selected_input == 0)
+                    selected_str = $scope["test_search"];
+                else
+                    selected_str = $scope["test_search" + selected_input];
+
+                if (selected_str != undefined && selected_str.trim().length > 0) {
+                    $scope.push_tests(selected_str, undefined, selected_input);
+                    $('.test_search_display').hide();
+                }
+
+            });
+        });
+
+        // $(document).on('click', (function () {
+        //     console.log("Body click");
+        //     $('.test_search_display').hide();
+        // }));
+    </script>
+
+</head>
+
+<body ng-app="testApp" ng-controller="myCtrl" ng-init="check_user()">
+    <!-- <main-area></main-area> -->
+    <!-- Modal HTML -->
+    <div id="myModal" class="modal fade" style="z-index: 9999999;">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="material-icons">&#xE5CD;</i>
+                    </div>
+                    <h4 class="modal-title">Are you sure?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you want to save these records? This process cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" ng-click="save_converted_prescription()"
+                        data-dismiss="modal">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="header_nav">
+        <img src="./athan_logo_gradiant.png">
+        <p id="txt" style="position: realtive;right:48%;color:#2886af;"></p>
+        <a href="http://192.168.1.150:40">
+            <p style="position: fixed;right:230px;cursor: pointer;">Medicines</p>
+        </a>
+        <p>{{user}}<img id="logout_arrow" style="width: 15px;height: 20px;" src="./arrow-down-sign-to-navigate.svg"
+                onclick="logout_card()"></p>
+        <div id="logout">
+            <ul>
+                <li onclick="window.localStorage.clear();window.location.reload();">Logout</li>
+                <li onclick="window.location='http://192.168.1.150:50'">Converted Prescriptions</li>
+            </ul>
+        </div>
+    </div>
+    <!-- {{prescription_arr}} -->
+
+    <div id="prescriptions_wrapper" class="container">
+        <div id="myCarousel" class="carousel slide">
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                <p style="top:5px;left:10px;position:relative;">{{prescription_arr.img_appt_id}}</p>
+                <div class="item active" ng-repeat="img in prescription_arr.image_data_final">
+                    <img src="{{img}}" alt="No Preview Available">
+                    <!-- <div class="carousel-caption" style="position: relative;top:-650px;left:0px;">
+                        <h3 style="color:black;">{{prescription_arr.image_data_final}}</h3>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="zoom_buttons">
+        <div id="zooms">
+            <img src="./zoom_in.png" onclick="zoom_image('in')">
+            <img src="./zoom_out.png" onclick="zoom_image('out')">
+        </div>
+        <div id="next_icons">
+            <i class="fa fa-fast-backward" aria-hidden="true" ng-click="next_appt_pres('back')"></i>
+            <i class="fa fa-fast-forward" aria-hidden="true" ng-click="next_appt_pres('forward')"></i>
+        </div>
+    </div>
+    <div id="prescription_convert_wrapper">
+        <!-- <div id="digitalize_by">
+            <p>Digitize By {{user}}</p>
+        </div> -->
+        <div id="flag_this">
+            <p>Flag : <input style="padding:10px;" type="checkbox"> Flag This</p>
+        </div>
+        <div class="tests_form">
+            <div class="head">
+                <h4>Tests</h4>
+                <div class="tests_inputs">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search1"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search" ng-change="search_diagnosis(test_search,0,0)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,0)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f1" ng-click="flag_test(0,0,f1)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(0)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion1" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search2"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(1)"
+                            ng-click="pop_out_test(1)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search1" ng-change="search_diagnosis(test_search1,0,1)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(1);"
+                            ng-click="pop_out_test(1)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,1)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f2" ng-click="flag_test(0,1,f2)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(1)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion2" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search3"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(2)"
+                            ng-click="pop_out_test(2)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search2" ng-change="search_diagnosis(test_search2,0,2)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(2);"
+                            ng-click="pop_out_test(2)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,2)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f3" ng-click="flag_test(0,2,f3)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(2)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion3" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search4"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(3)"
+                            ng-click="pop_out_test(3)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search3" ng-change="search_diagnosis(test_search3,0,3)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(3);"
+                            ng-click="pop_out_test(3)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,3)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f4" ng-click="flag_test(0,3,f4)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(3)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion4" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search5"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(4)"
+                            ng-click="pop_out_test(4)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search4" ng-change="search_diagnosis(test_search4,0,4)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(4);"
+                            ng-click="pop_out_test(4)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,4)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f5" ng-click="flag_test(0,4,f5)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(4)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion5" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search6"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(5)"
+                            ng-click="pop_out_test(5)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search5" ng-change="search_diagnosis(test_search5,0,5)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(5);"
+                            ng-click="pop_out_test(5)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,5)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f6" ng-click="flag_test(0,5,f6)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(5)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion6" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search7"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(6)"
+                            ng-click="pop_out_test(6)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search6" ng-change="search_diagnosis(test_search6,0,6)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(6);"
+                            ng-click="pop_out_test(6)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,6)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f7" ng-click="flag_test(0,6,f7)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(6)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion7" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search8"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(7)"
+                            ng-click="pop_out_test(7)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search7" ng-change="search_diagnosis(test_search7,0,7)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(7);"
+                            ng-click="pop_out_test(7)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,7)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f8" ng-click="flag_test(0,7,f8)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(7)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion8" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search9"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(8)"
+                            ng-click="pop_out_test(8)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search8" ng-change="search_diagnosis(test_search8,0,8)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(8);"
+                            ng-click="pop_out_test(8)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,8)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f9" ng-click="flag_test(0,8,f9)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(8)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion9" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search10"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(9)"
+                            ng-click="pop_out_test(9)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search9" ng-change="search_diagnosis(test_search9,0,9)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(9);"
+                            ng-click="pop_out_test(9)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <div class="test_search_display">
+                        <ul>
+                            <li ng-repeat="tests in tests_search_results"
+                                ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,9)">
+                                {{tests.diagnosis_name}}</li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f10" ng-click="flag_test(0,9,f10)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(9)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion10" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <!--Added new Tests Div-->
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search11"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(10)"
+                            ng-click="pop_out_test(10)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search10" ng-change="search_diagnosis(test_search10,0,10)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(10);"
+                            ng-click="pop_out_test(10)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,10)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f11" ng-click="flag_test(0,10,f11)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(10)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion11" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search12"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(11)"
+                            ng-click="pop_out_test(11)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search11" ng-change="search_diagnosis(test_search11,0,11)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(11);"
+                            ng-click="pop_out_test(11)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,11)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f12" ng-click="flag_test(0,11,f12)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(11)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion12" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search13"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(12)"
+                            ng-click="pop_out_test(12)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search12" ng-change="search_diagnosis(test_search12,0,12)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(12);"
+                            ng-click="pop_out_test(12)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,12)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f13" ng-click="flag_test(0,12,f13)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(12)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion13" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search14"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(13)"
+                            ng-click="pop_out_test(13)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search13" ng-change="search_diagnosis(test_search13,0,13)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(13);"
+                            ng-click="pop_out_test(13)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,13)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f14" ng-click="flag_test(0,13,f14)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(13)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion14" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tests_inputs not_visible">
+                    <div class="select_diagnosis_drop_down">
+                        <select class="js-data-example-ajax" style="width:250px;" ng-model="test_search15"></select>
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(14)"
+                            ng-click="pop_out_test(14)">
+                    </div>
+                    <!-- <input type="text" placeholder="COMPLETE BLOOD COUNT; CBC" class="enter_test_name"
+                            ng-model="test_search14" ng-change="search_diagnosis(test_search14,0,14)">
+                        <img class="add_test" src="./Group_38.svg" onclick="add_input_tests();">
+                        <img class="add_test" src="./Group_39.svg" onclick="remove_input_tests(14);"
+                            ng-click="pop_out_test(14)"> -->
+                    <!-- <img class="add_test" src="./Group_38.svg" ng-click="add_input()"> -->
+                    <!-- <div class="test_search_display">
+                            <ul>
+                                <li ng-repeat="tests in tests_search_results"
+                                    ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,14)">
+                                    {{tests.diagnosis_name}}</li>
+                            </ul>
+                        </div> -->
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="f15" ng-click="flag_test(0,14,f15)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span style="cursor: pointer;font-size:17px;position: relative;left:70px;"
+                            ng-click="comment_test(14)">Comment</span>
+                        <div class="test_suggestion">
+                            <textarea ng-model="suggestion15" placeholder="Enter comments here"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="procedures_form">
+            <div class="head">
+                <h4>Procedures</h4>
+                <div class="procedures_input">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search" ng-change="search_diagnosis(procedure_search,1,0)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,0)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p1" ng-click="flag_procedures(1,0,p1)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="procedures_input not_visible_procedures">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search1" ng-change="search_diagnosis(procedure_search1,1,1)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                    <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(1);"
+                        ng-click="pop_out_procedures(1)">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,1)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p2" ng-click="flag_procedures(1,1,p2)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="procedures_input not_visible_procedures">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search2" ng-change="search_diagnosis(procedure_search2,1,2)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                    <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(2);"
+                        ng-click="pop_out_procedures(2)">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,2)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p3" ng-click="flag_procedures(1,2,p3)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="procedures_input not_visible_procedures">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search3" ng-change="search_diagnosis(procedure_search3,1,3)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                    <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(3);"
+                        ng-click="pop_out_procedures(3)">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,3)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p4" ng-click="flag_procedures(1,3,p4)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="procedures_input not_visible_procedures">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search4" ng-change="search_diagnosis(procedure_search4,1,4)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                    <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(4);"
+                        ng-click="pop_out_procedures(4)">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,4)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p5" ng-click="flag_procedures(1,4,p5)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="procedures_input not_visible_procedures">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search5" ng-change="search_diagnosis(procedure_search5,1,5)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                    <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(5);"
+                        ng-click="pop_out_procedures(5)">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,5)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p6" ng-click="flag_procedures(1,5,p6)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="procedures_input not_visible_procedures">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search6" ng-change="search_diagnosis(procedure_search6,1,6)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                    <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(6);"
+                        ng-click="pop_out_procedures(6)">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,6)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p7" ng-click="flag_procedures(1,6,p7)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="procedures_input not_visible_procedures">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search7" ng-change="search_diagnosis(procedure_search7,1,7)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                    <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(7);"
+                        ng-click="pop_out_procedures(7)">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,7)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p8" ng-click="flag_procedures(1,7,p8)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="procedures_input not_visible_procedures">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search8" ng-change="search_diagnosis(procedure_search8,1,8)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                    <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(8);"
+                        ng-click="pop_out_procedures(8)">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,8)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p9" ng-click="flag_procedures(1,8,p9)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="procedures_input not_visible_procedures">
+                    <input type="text" placeholder="Enter Procedure" class="enter_procedure_name" id="procedure"
+                        ng-model="procedure_search9" ng-change="search_diagnosis(procedure_search9,1,9)">
+                    <img class="add_procedure" src="./Group_38.svg" onclick="add_input_procedures();">
+
+                    <img class="add_procedure" src="./Group_39.svg" onclick="remove_input_procedures(9);"
+                        ng-click="pop_out_procedures(9)">
+                    <div class="procedures_search_display">
+                        <ul>
+                            <li ng-repeat="procedures in procedure_search_results"
+                                ng-click="push_procedures(procedures.diagnosis_name,procedures.diagnosis_id,9)">
+                                {{procedures.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="p10" ng-click="flag_procedures(1,9,p10)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="consumables_form">
+            <div class="head">
+                <h4>Consumable</h4>
+                <div class="consumables_input" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search" ng-change="search_diagnosis(consumable_search,2,0)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,0)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c1" ng-click="flag_consumables(2,0,c1)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="consumables_input not_visible_consumables" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search1" ng-change="search_diagnosis(consumable_search1,2,1)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+
+                    <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(1);"
+                        ng-click="pop_out_consumables(1)">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,1)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c2" ng-click="flag_consumables(2,1,c2)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="consumables_input not_visible_consumables" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search2" ng-change="search_diagnosis(consumable_search2,2,2)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+
+                    <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(2);"
+                        ng-click="pop_out_consumables(2)">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,2)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c3" ng-click="flag_consumables(2,2,c3)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="consumables_input not_visible_consumables" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search3" ng-change="search_diagnosis(consumable_search3,2,3)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+
+                    <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(3);"
+                        ng-click="pop_out_consumables(3)">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,3)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c4" ng-click="flag_consumables(2,3,c4)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="consumables_input not_visible_consumables" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search4" ng-change="search_diagnosis(consumable_search4,2,4)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+
+                    <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(4);"
+                        ng-click="pop_out_consumables(4)">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,4)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c5" ng-click="flag_consumables(2,4,c5)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="consumables_input not_visible_consumables" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search5" ng-change="search_diagnosis(consumable_search5,2,5)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+
+                    <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(5);"
+                        ng-click="pop_out_consumables(5)">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,5)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c6" ng-click="flag_consumables(2,5,c6)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="consumables_input not_visible_consumables" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search6" ng-change="search_diagnosis(consumable_search6,2,6)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+
+                    <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(6);"
+                        ng-click="pop_out_consumables(6)">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,6)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c7" ng-click="flag_consumables(2,6,c7)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="consumables_input not_visible_consumables" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search7" ng-change="search_diagnosis(consumable_search7,2,7)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+
+                    <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(7);"
+                        ng-click="pop_out_consumables(7)">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,7)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c8" ng-click="flag_consumables(2,7,c8)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="consumables_input not_visible_consumables" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search8" ng-change="search_diagnosis(consumable_search8,2,8)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+
+                    <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(8);"
+                        ng-click="pop_out_consumables(8)">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,8)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c9" ng-click="flag_consumables(2,8,c9)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+                <div class="consumables_input not_visible_consumables" id="consumable_input">
+                    <input type="text" placeholder="Walker" class="enter_consumable_name" id="consumable"
+                        ng-model="consumable_search9" ng-change="search_diagnosis(consumable_search9,2,9)">
+                    <img class="add_consumable" src="./Group_38.svg" onclick="add_input_remove_input_consumables();">
+
+                    <img class="add_consumable" src="./Group_39.svg" onclick="remove_input_consumables(9);"
+                        ng-click="pop_out_consumables(9)">
+                    <div class="consumables_search_display">
+                        <ul>
+                            <li ng-repeat="consumables in consumables_search_results"
+                                ng-click="push_consumables(consumables.diagnosis_name,consumables.diagnosis_id,9)">
+                                {{consumables.diagnosis_name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom_checks">
+                        <input type="checkbox" ng-model="c10" ng-click="flag_consumables(2,9,c10)">&nbsp;&nbsp;<span
+                            style="font-size:17px">Flag</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="action_buttons">
+            <button class="save_button" ng-click="save_converted_prescription()">SAVE</button>
+            <button class="refresh_button" onclick="ClearFields();">REFRESH</button>
+        </div>
+    </div>
+</body>
+
+</html>

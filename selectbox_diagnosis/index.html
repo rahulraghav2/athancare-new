@@ -1,0 +1,58 @@
+<style>
+    label {
+        font-family: "Fira Sans", sans-serif;
+    }
+
+    .enter_medicine_name {
+        width: 180px;
+        height: 40px;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+        border: solid 1px #e3e3e3;
+        background-color: #ffffff;
+        outline: none;
+        color: #2886af;
+        text-align: center;
+        position: relative;
+        top: 30px;
+        left: 20px;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+<script>
+    var app = angular.module('testApp', [])
+    app.controller('myCtrl', function ($scope, $http, $interval, $timeout) {
+        $scope.medicine_search_results = [];
+        $scope.search_medicine = function (medicine, pos) {
+            console.log("Inside search_medicine", medicine);
+
+            if (medicine.trim().length != 0) {
+
+                $http.get('http://192.168.1.150:9090/search_medicine/' + medicine.trim())
+                    .then(function (response) {
+
+                        console.log("response", response.data)
+                        if (response.data.length > 0)
+                            $scope.medicine_search_results = response.data;
+                        else {
+                            $scope.medicine_search_results = [{
+                                "medicine_name": medicine + " - Not Found"
+                            }]
+                        }
+
+                    });
+            }
+        }
+    });
+</script>
+
+<body ng-app="testApp" ng-controller="myCtrl">
+
+    <input list="medicines-search" id="medicine" name="medicine" ng-model="med_name"
+        ng-change="search_medicine(med_name)" class="enter_medicine_name"/>
+    <datalist id="medicines-search">
+        <option ng-repeat="medicine in medicine_search_results" value="{{medicine.medicine_name}}"></option>
+    </datalist>
+</body>

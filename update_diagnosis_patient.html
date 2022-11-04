@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Diagnosis</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="./work.js"></script>
+    <script src="script1.js"></script>
+    <script src="updatepatientInfo.js"></script>
+    <link href="ng-responsive-carousel.css" rel="stylesheet" type="text/css">
+</head>
+
+<body ng-app="testApp" ng-controller="myCtrl" ng-init="check_user()">
+    
+
+    <div id="header_nav">
+        <img src="./athan_logo_gradiant.png">
+        <p style="position: fixed;top:40px;color:#2886af;font-size: 12px;width: 100%;text-align: center;left:0px;">Speciality - {{prescription_arr.speciality}}</p>
+        <p id="txt" style="position: fixed;top:10px;color:#2886af;width: 100%;text-align: center;left:0px;"></p>
+        <!-- <a href="http://192.168.1.150:40">
+            <p style="position: fixed;right:230px;cursor: pointer;">Medicines</p>
+        </a> -->
+        <p onclick="logout_card()" class="userName">
+            {{user}}
+            <img id="logout_arrow" style="width: 15px;height: 20px;" src="./arrow-down-sign-to-navigate.svg">
+        </p>
+        <div id="logout">
+            <ul>
+                <li onclick="window.localStorage.clear();window.location.href='http://192.168.1.150:60'">Logout</li>
+                <!-- <li onclick="window.location='http://192.168.1.150:50'">Converted Prescriptions</li> -->
+            </ul>
+        </div>
+    </div>
+    <!-- {{prescription_arr}} -->
+    <div class="diagnosisContainer">
+        <div id="prescriptions_wrapper" class="prescriptionsWrapper">
+
+            <div class="prescCarousel">
+                <p style="top:5px;left:10px;position:relative;">{{prescription_arr.img_appt_id}}</p>
+                <!-- <div ng-click="prevPrescPage()">Back</div> -->
+                <div ng-if="isPrev" class="prevPage" ng-click="prevPrescPage()"><i class="fa fa-chevron-left fa-2x"></i>
+                </div>
+                <div id="lightgallery"></div>
+                <!-- <div ng-click="nextPrescPage()">Next</div> -->
+                <div ng-if="isNext" class="nextPage" ng-click="nextPrescPage()"><i
+                        class="fa fa-chevron-right fa-2x"></i></div>
+            </div>
+            <div id="zoom_buttons" class="zoomButtons">
+                <!-- <div id="zooms" class="zoomIcons">
+                    <img src="./zoom_in.png" onclick="zoom_image('in')">
+                    <img src="./zoom_out.png" onclick="zoom_image('out')">
+                </div> -->
+                <div id="next_icons" class="nextIcons">
+                    <!-- <i class="fa fa-fast-backward" aria-hidden="true" ng-click="next_appt_pres('back')"></i> -->
+                    <i class="fa fa-fast-forward" aria-hidden="true" ng-click="skip_prescription()"></i>
+                </div>
+            </div>
+        </div>
+
+        <div id="prescription_convert_wrapper" class="prescriptionConvertWrapper">
+            <!-- <div id="digitalize_by">
+                <p>Digitize By {{user}}</p>
+            </div> -->
+           
+            <div class="tests_form">
+                <div class="head">
+                <h4>Patient Details</h4>
+                </div>
+                <div class="content">
+                    <div class="tests_inputs">
+                        <div class="prescriptionInputs">
+                            <!-- <input list="testInput1" type="text" placeholder="Ex: Complete Blood Count" class="enter_test_name"
+                            ng-model="test_search" ng-change="search_diagnosis(test_search,0,0)" class="testInput" autocomplete="off">
+                            <datalist id="testInput1">
+                                <option class="diagnosisName" ng-if="isLoad && tests_search_results.length>0" value="{{tests.diagnosis_name}}" ng-repeat="tests in tests_search_results" 
+                                ng-click="push_tests(tests.diagnosis_name,tests.diagnosis_id,0)"
+                                >
+                            </datalist> -->
+                            <div class="input-dropdown">
+                            <input type="text" class="enter_test_name"
+                                    placeholder="Name" >
+                                <!-- ng-click="selectItem(item)" -->
+                               
+                            </div>
+                            <div class="input-dropdown">
+                            <input type="text" class="enter_test_name"  placeholder="Mobile" 
+                                    ng-required="inputRequired">
+                                <!-- ng-click="selectItem(item)" -->
+                               
+                            </div>
+
+                            <div class="input-dropdown">
+                            <input type="date" class="enter_test_name"  placeholder="Date of Birth">
+                             </div>
+                             
+                            <div class="input-dropdown">
+                            <div class="athencare-gender-section">
+                            <div class="gender">Gender</div>
+                            <div class="form-check">
+                                <input class="form-check-input" id="trigger_event1" type="radio" name="trigger_event" value="create" checked="">
+                                <label class="form-check-label" for="trigger_event1">Male</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" id="trigger_event2" type="radio" name="trigger_event" value="read">
+                                <label class="form-check-label" for="trigger_event2">Femail</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" id="trigger_event2" type="radio" name="trigger_event" value="read">
+                                <label class="form-check-label" for="trigger_event2">Other</label>
+                            </div>
+                            </div> 
+                            </div>
+                            
+                        </div>
+                       
+                       
+                    </div>
+                    </div>
+            </div>
+           
+            
+            <div id="action_buttons">
+                <button id="myModal" class="save_button">SAVE</button>
+                <button class="refresh_button" onclick="ClearFields();">REFRESH</button>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

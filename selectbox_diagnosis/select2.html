@@ -1,0 +1,88 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="./select2.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script>
+    var app = angular.module('testApp', [])
+    app.controller('myCtrl', function ($scope, $http, $interval, $timeout) {
+
+        // In your Javascript (external .js resource or <script> tag)
+        $(document).ready(function () {
+            $('.js-example-basic-single').select2();
+
+            var data_to_show = [];
+
+            $('.js-data-example-ajax').select2({
+                ajax: {
+                    url: 'http://192.168.1.150:9090/search_medicine/',
+                    data: function (params) {
+                        var query = {
+                            med: params.term,
+                        }
+                        console.log("Params", params.term)
+
+                        // Query parameters will be ?search=[term]&type=public
+                        return query;
+                    },
+                    processResults: function (data) {
+                        console.log("response", data)
+                        data_to_show = data;
+                        // Transforms the top-level key of the response object from 'items' to 'results'
+                        return {
+                            results: data.items
+                        }
+                    }
+
+                },
+                placeholder: 'Search medicine',
+                minimumInputLength: 1,
+                templateResult: formatRepo,
+                templateSelection: formatRepoSelection
+            });
+        });
+
+        function formatRepo(repo) {
+
+            if (repo.loading) {
+                return repo.text;
+            }
+
+            var $container = $(
+                "<div class='select2-result-repository clearfix'>" +
+                "<div class='select2-result-repository__meta'>" +
+                "<div class='select2-result-medicine_name'></div>" +
+                "</div>" +
+                "</div>" +
+                "</div>"
+            );
+
+            $container.find(".select2-result-medicine_name").text(repo.medicine_name);
+
+            return $container;
+        }
+
+        function formatRepoSelection(repo) {
+            select_medicine(repo.medicine_name);
+            return repo.medicine_name || repo.text;
+        }
+
+        function select_medicine(medicine) {
+
+            if (medicine != undefined)
+                $scope.medicine1 = medicine;
+        }
+
+        $scope.submit = function(){
+            console.log("Final submit",$scope.medicine1);
+        }
+
+    });
+    
+</script>
+
+<body ng-app="testApp" ng-controller="myCtrl">
+    <select class="js-data-example-ajax" style="width: 100%;"></select>
+
+    <button ng-click="submit()">Submit</button>
+</body>

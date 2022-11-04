@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Angular input dropdown demo</title>
+  <link rel="stylesheet" href="dropdown.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px 0 0 40px;
+    }
+    
+    h1,
+    h2 {
+      font-weight: normal;
+    }
+    
+    h2 {
+      font-size: 22px;
+      margin: 50px 0 15px 0;
+    }
+    
+    button[type='submit'] {
+      font-size: 15px;
+      padding: 10px;
+    }
+    /* Custom input dropdown styles */
+    
+    .input-dropdown {
+      margin: 0 30px 0 0;
+      width: 350px;
+      /* set the width of the input and dropdown */
+    }
+    
+    .input-dropdown input[type='text'] {
+      font-size: 15px;
+      padding: 5px;
+    }
+    
+    .input-dropdown ul > li {
+      transition: background .15s;
+    }
+  </style>
+</head>
+
+<body ng-app="inputDropdownDemo">
+  <div class="content" ng-controller="InputDropdownController as dropdownCtrl">
+    <h1>Hit the http://localhost:8000/diagnosis.html </h1>
+    <!-- <h1>Angular input dropdown demo</h1>
+    <p>Code on <a href="https://github.com/hannaholl/angular-input-dropdown">Github</a>.</p>
+
+    <h2>Select a country from a list of strings</h2>
+    <form name="demoFormStrings" ng-submit="dropdownCtrl.submitFormStrings()" novalidate="">
+      <input-dropdown input-placeholder="Country string" input-name="country-strings" input-required="true" selected-item="dropdownCtrl.countryString" default-dropdown-items="dropdownCtrl.defaultDropdownStrings" filter-list-method="dropdownCtrl.filterStringList(userInput)"
+      item-selected-method="dropdownCtrl.itemStringSelected(item)"></input-dropdown>
+      <button type="submit" ng-disabled="demoFormStrings.$invalid">Submit</button>
+    </form>
+    <p>{{dropdownCtrl.stringMessage}}</p>
+    
+    <h2>Select a country from a list of objects</h2>
+    <form name="demoFormObjects" ng-submit="dropdownCtrl.submitFormObjects()" novalidate="">
+    
+      <div class="input-dropdown">
+        <input type="text"
+               name="diagnosisName"
+               placeholder="{{inputPlaceholder}}"
+               ng-model="inputValue"
+               ng-required="inputRequired"
+               ng-change="inputChange(inputValue)"
+               ng-focus="inputFocus()"
+               ng-blur="inputBlur($event)"
+               ng-keydown="handleKeyNavigation($event)"
+        >
+         <ul ng-show="dropdownVisible">
+          <li ng-repeat="item in filteredArray"
+              ng-click="selectItem(item)"
+              ng-mouseenter="setActive($index)"
+              ng-mousedown="dropdownPressed()"
+              ng-class="{'active': activeItemIndex === $index}"
+          > 
+            <span ng-if="item.diagnosis_name">{{item.diagnosis_name}}</span> 
+            <span ng-if="!item.diagnosis_name">{{item.diagnosis_name}}</span>
+          </li> 
+        </ul>
+      </div>
+      <button type="submit" ng-disabled="demoFormObjects.$invalid">Submit</button>
+    </form>
+    <p>{{dropdownCtrl.objectMessage}}</p> -->
+  </div>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"></script>
+  <!-- <script src="inputDropdown.js"></script> -->
+
+  <script>
+    // Add 'inputDropdown' as a dependency when creating angular app
+    var demoApp = angular.module('inputDropdownDemo', []);
+    demoApp.controller('InputDropdownController',
+      function($scope, $q, $http) {
+        $scope.inputPlaceholder = 'Diagnosis Name';
+        $scope.inputValue = '';
+        $scope.filteredArray = [];
+        $scope.dropdownVisible = false;
+        $scope.activeItemIndex = 0;
+        $scope.pressedDropdown = false;
+        
+
+        $scope.inputChange = function(userInput){
+            console.log(userInput);
+            console.log(userInput.trim().length);
+            if (userInput.trim().length != 0){
+              var normalisedInput = userInput.toLowerCase();
+              var data = {};
+              data.search_string = userInput;
+              data.test_type = 0;
+              $http({
+                  method: 'POST',
+                  url: 'http://182.77.63.129:9090/get_lab_diagnosisTests',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  data: angular.toJson(data)
+              }).then(function (response) {
+                  var diagnosisArray = response.data.items;
+                  console.log(diagnosisArray);
+                  if(diagnosisArray.length>0){
+                      $scope.filteredArray = diagnosisArray.filter(function(diagnosisObject) {
+                      console.log(diagnosisObject);
+                      var diagnosisName = diagnosisObject.diagnosis_name.toLowerCase().indexOf(normalisedInput) === 0;
+                          return diagnosisName;
+                      });
+                      console.log($scope.filteredArray);
+                      $scope.dropdownVisible = true
+                  }
+              })
+          }else{
+            $scope.filteredArray = [];
+          }
+        }
+        
+        $scope.selectItem = function(item) {
+            console.log(item)
+            $scope.selectedItem = item;
+            $scope.hideDropdown();
+            $scope.filteredArray = [item];
+            $scope.inputValue=item.diagnosis_name
+            console.log($scope.filteredArray);
+        };
+
+        $scope.hideDropdown = function() {
+            $scope.dropdownVisible = false;
+        }
+        
+        $scope.setActive = function(itemIndex) {
+            $scope.activeItemIndex = itemIndex;
+        };
+
+        $scope.dropdownPressed = function() {
+            $scope.pressedDropdown = true;
+        }
+        
+        $scope.inputFocus = function() {
+            $scope.setActive(0);
+            $scope.showDropdown();
+        };
+
+        $scope.showDropdown = function () {
+            $scope.dropdownVisible = true;
+        };
+
+        $scope.inputBlur = function(event) {
+            if ($scope.pressedDropdown) {
+                // Blur event is triggered before click event, which means a click on a dropdown item wont be triggered if we hide the dropdown list here.
+                $scope.pressedDropdown = false;
+                return;
+            }
+            $scope.hideDropdown();
+        };
+
+
+        $scope.selectPreviousItem = function() {
+        var prevIndex = $scope.activeItemIndex - 1;
+        console.log(prevIndex);
+        if (prevIndex >= 0) {
+          $scope.setActive(prevIndex);
+        }
+      };
+
+        $scope.selectNextItem = function() {
+            var nextIndex = $scope.activeItemIndex + 1;
+            console.log(nextIndex);
+            console.log($scope.filteredArray.length);
+            if (nextIndex < $scope.filteredArray.length) {
+                $scope.setActive(nextIndex);
+            }
+        };
+
+        $scope.selectActiveItem = function()  {
+            console.log('Select Active item')
+            if ($scope.activeItemIndex >= 0 && $scope.activeItemIndex < $scope.filteredArray.length) {
+                $scope.selectItem($scope.filteredArray[$scope.activeItemIndex]);
+            }
+        };
+        
+        $scope.handleKeyNavigation = function(event){
+          console.log(event.which);
+          switch(event.which){
+            case 38: //up
+            $scope.selectPreviousItem();
+            break;
+
+            case 40: //down
+            $scope.selectNextItem();
+            break;
+
+            case 13: //return
+            if ($scope.dropdownVisible && $scope.filteredArray && $scope.filteredArray.length > 0) {
+                 // only preventDefault when there is a list so that we can submit form with return key after a selection is made
+                event.preventDefault();
+                $scope.selectActiveItem();
+            }
+            break;
+          }
+        }
+      }
+    );
+  </script>
+</body>
+</html>
